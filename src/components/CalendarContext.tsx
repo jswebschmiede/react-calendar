@@ -23,20 +23,21 @@ export const useCalendarContext = (): CalendarContextProps =>
 export const CalendarProvider: React.FC<CalendarProviderProps> = ({
     children
 }) => {
-    const currentDate = new Date();
+    const currentDate = new Date(); // Get current date
     const firstDayOfMonth = new Date(
-        currentDate.getFullYear(),
-        currentDate.getMonth(),
+        currentDate.getFullYear(), // Get year
+        currentDate.getMonth(), // Get month (no need to add 1 because we want first day of month)
         1
     );
     const daysInMonth = new Date(
-        currentDate.getFullYear(),
-        currentDate.getMonth() + 1,
+        currentDate.getFullYear(), // Get year
+        currentDate.getMonth() + 1, // Get month (add 1 because month index starts at 0)
         0
     ).getDate();
-    const startOffset = (firstDayOfMonth.getDay() + 6) % 7;
-    const totalDays = daysInMonth + startOffset;
+    const startOffset = (firstDayOfMonth.getDay() + 6) % 7; // 0 = Monday, 6 = Sunday
+    const totalDays = daysInMonth + startOffset; // Total days in month + days before first day of month
 
+    // Create array of days in month
     const days = Array.from({ length: totalDays }, (_, index) =>
         index >= startOffset
             ? addDays(firstDayOfMonth, index - startOffset)

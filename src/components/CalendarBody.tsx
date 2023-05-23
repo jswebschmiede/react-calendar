@@ -4,11 +4,10 @@ import { chunk } from 'lodash';
 import { useCalendarContext } from './CalendarContext';
 
 const CalendarBody: React.FC = () => {
-    const { days, locale } = useCalendarContext();
+    const { days, locale } = useCalendarContext(); // Get days and locale from context
 
-    const firstDayOfMonth = days.find(isDate);
-
-    const weeks = Array.isArray(days) ? chunk(days, 7) : [];
+    const firstDayOfMonth = days.find(isDate); // Find first day of month
+    const weeks = Array.isArray(days) ? chunk(days, 7) : []; // Chunk days into weeks
 
     return (
         <div className='calendar__body border-l-2 border-t-2 bg-white'>
