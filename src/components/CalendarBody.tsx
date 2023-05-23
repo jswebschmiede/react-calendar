@@ -1,28 +1,27 @@
 import React from 'react';
-import { format, addDays, isDate } from 'date-fns';
+import {
+    format,
+    addDays,
+    isDate,
+    isBefore,
+    startOfMonth,
+    isSameMonth
+} from 'date-fns';
 import { chunk } from 'lodash';
 import { useCalendarContext } from './CalendarContext';
 
 const CalendarBody: React.FC = () => {
-    const { days, locale } = useCalendarContext(); // Get days and locale from context
-
-    const firstDayOfMonth = days.find(isDate); // Find first day of month
-    const weeks = Array.isArray(days) ? chunk(days, 7) : []; // Chunk days into weeks
+    const { days, locale, weekdayNames } = useCalendarContext();
+    const weeks = Array.isArray(days) ? chunk(days, 7) : [];
 
     return (
         <div className='calendar__body border-l-2 border-t-2 bg-white'>
             <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-7'>
-                {weeks[0].map((_, index) => (
+                {weekdayNames.map(({ label }) => (
                     <div
-                        key={index}
+                        key={label}
                         className='hidden border-b-2 border-r-2 p-2 lg:block'>
-                        {format(
-                            addDays(firstDayOfMonth as Date, index),
-                            'EEEE',
-                            {
-                                locale
-                            }
-                        )}
+                        {label}
                     </div>
                 ))}
             </div>
@@ -35,7 +34,12 @@ const CalendarBody: React.FC = () => {
                         day ? (
                             <div
                                 key={day.toISOString()}
-                                className='h-48 border-b-2 border-r-2 p-2'
+                                className={`h-48 border-b-2 border-r-2 p-2 ${
+                                    !isDate(day) ||
+                                    !isSameMonth(day, Number(days[0]))
+                                        ? ''
+                                        : 'bg-gray-100 text-gray-500'
+                                }`}
                                 aria-label={`Events for day ${format(
                                     day,
                                     'd'

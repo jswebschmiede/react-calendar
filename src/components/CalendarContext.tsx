@@ -1,11 +1,20 @@
-import { createContext, useContext, useState } from 'react';
-import { addDays } from 'date-fns';
+import React, { createContext, useContext, useState } from 'react';
+import {
+    addDays,
+    startOfMonth,
+    startOfWeek,
+    isSameMonth,
+    Locale,
+    getDay
+} from 'date-fns';
 import { de } from 'date-fns/locale';
+import { daysInWeek, DaysInWeekProps } from '../utils/shared';
 
-interface CalendarContextProps {
+interface CalendarContextProps extends DaysInWeekProps {
     days: (Date | null)[];
     currentMonth: Date;
-    locale?: Locale;
+    locale: Locale;
+    weekdayNames: { day: number; label: string }[];
     onCurrentMonthChange: (date: Date) => void;
 }
 
@@ -17,44 +26,68 @@ const CalendarContext = createContext<CalendarContextProps>(
     {} as CalendarContextProps
 );
 
-// eslint-disable-next-line
 export const useCalendarContext = (): CalendarContextProps =>
     useContext(CalendarContext);
 
 export const CalendarProvider: React.FC<CalendarProviderProps> = ({
     children
 }) => {
-    const currentDate = new Date(); // Get current date
-    const firstDayOfMonth = new Date(
-        currentDate.getFullYear(), // Get year
-        currentDate.getMonth(), // Get month (no need to add 1 because we want first day of month)
-        1
-    );
-    const daysInMonth = new Date(
-        currentDate.getFullYear(), // Get year
-        currentDate.getMonth() + 1, // Get month (add 1 because month index starts at 0)
-        0
-    ).getDate();
-    const startOffset = (firstDayOfMonth.getDay() + 6) % 7; // 0 = Monday, 6 = Sunday
-    const totalDays = daysInMonth + startOffset; // Total days in month + days before first day of month
-
-    // Create array of days in month
-    const days = Array.from({ length: totalDays }, (_, index) =>
-        index >= startOffset
-            ? addDays(firstDayOfMonth, index - startOffset)
-            : null
-    );
-
+    const currentDate = new Date();
     const [currentMonth, setCurrentMonth] = useState<Date>(currentDate);
+    const locale = de; // Set your desired locale here
+    const weekdayNames = daysInWeek({ locale });
+
+    const generatePreviousMonthDays = (date: Date) => {
+        const firstDayOfMonth = startOfMonth(date);
+        const firstDayOfWeek = getDay(firstDayOfMonth);
+
+        // Berechne das Datum des ersten Tages des vorherigen Monats
+        const firstDayOfPreviousMonth = addDays(
+            firstDayOfMonth,
+            -firstDayOfWeek
+        );
+
+        const previousMonthDays: Date[] = [];
+        let currentDate = firstDayOfPreviousMonth;
+
+        // Generiere die Tage des vorherigen Monats
+        for (let i = 0; i < firstDayOfWeek; i++) {
+            previousMonthDays.push(currentDate);
+            currentDate = addDays(currentDate, 1);
+        }
+
+        return previousMonthDays;
+    };
+
+    const generateDaysArray = (date: Date) => {
+        const firstDayOfMonth = startOfMonth(date);
+        const daysInMonth: (Date | null)[] = [];
+        let currentDate = firstDayOfMonth;
+
+        while (isSameMonth(currentDate, firstDayOfMonth)) {
+            daysInMonth.push(currentDate);
+            currentDate = addDays(currentDate, 1);
+
+            if (!isSameMonth(currentDate, firstDayOfMonth)) {
+                break; // Beende die Schleife, wenn der nächste Monat beginnt
+            }
+        }
+
+        return daysInMonth;
+    };
 
     const handleCurrentMonthChange = (date: Date) => {
         setCurrentMonth(date);
     };
 
+    const daysInCurrentMonth = generateDaysArray(currentMonth);
+    const daysInPreviousMonth = generatePreviousMonthDays(currentMonth);
+
     const calendarContextValue: CalendarContextProps = {
-        days,
+        days: [...daysInPreviousMonth, ...daysInCurrentMonth],
         currentMonth,
-        locale: de, // Set your desired locale here
+        locale,
+        weekdayNames,
         onCurrentMonthChange: handleCurrentMonthChange
     };
 
