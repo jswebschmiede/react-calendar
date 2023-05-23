@@ -17,6 +17,7 @@ const CalendarContext = createContext<CalendarContextProps>(
     {} as CalendarContextProps
 );
 
+// eslint-disable-next-line
 export const useCalendarContext = (): CalendarContextProps =>
     useContext(CalendarContext);
 
