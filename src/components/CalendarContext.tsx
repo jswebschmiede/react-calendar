@@ -15,6 +15,7 @@ interface CalendarContextProps extends DaysInWeekProps {
     currentMonth: Date;
     locale: Locale;
     weekdayNames: { day: number; label: string }[];
+    daysInPreviousMonth: Date[];
     onCurrentMonthChange: (date: Date) => void;
 }
 
@@ -88,6 +89,7 @@ export const CalendarProvider: React.FC<CalendarProviderProps> = ({
         currentMonth,
         locale,
         weekdayNames,
+        daysInPreviousMonth,
         onCurrentMonthChange: handleCurrentMonthChange
     };
 

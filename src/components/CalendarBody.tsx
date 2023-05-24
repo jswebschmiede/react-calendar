@@ -11,7 +11,8 @@ import { chunk } from 'lodash';
 import { useCalendarContext } from './CalendarContext';
 
 const CalendarBody: React.FC = () => {
-    const { days, locale, weekdayNames } = useCalendarContext();
+    const { days, locale, weekdayNames, daysInPreviousMonth } =
+        useCalendarContext();
     const weeks = Array.isArray(days) ? chunk(days, 7) : [];
 
     return (
@@ -35,10 +36,10 @@ const CalendarBody: React.FC = () => {
                             <div
                                 key={day.toISOString()}
                                 className={`h-48 border-b-2 border-r-2 p-2 ${
-                                    !isDate(day) ||
-                                    !isSameMonth(day, Number(days[0]))
-                                        ? ''
-                                        : 'bg-gray-100 text-gray-500'
+                                    isSameMonth(day, Number(days[0])) &&
+                                    daysInPreviousMonth.length !== 0
+                                        ? 'bg-gray-100 text-gray-500'
+                                        : 'bg-white text-black'
                                 }`}
                                 aria-label={`Events for day ${format(
                                     day,
