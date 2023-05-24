@@ -1,12 +1,5 @@
 import React, { createContext, useContext, useState } from 'react';
-import {
-    addDays,
-    startOfMonth,
-    startOfWeek,
-    isSameMonth,
-    Locale,
-    getDay
-} from 'date-fns';
+import { addDays, startOfMonth, isSameMonth, Locale, getDay } from 'date-fns';
 import { de } from 'date-fns/locale';
 import { daysInWeek, DaysInWeekProps } from '../utils/shared';
 
@@ -38,40 +31,33 @@ export const CalendarProvider: React.FC<CalendarProviderProps> = ({
     const locale = de; // Set your desired locale here
     const weekdayNames = daysInWeek({ locale });
 
-    const generatePreviousMonthDays = (date: Date) => {
+    const generatePreviousMonthDays = (date: Date): Date[] => {
         const firstDayOfMonth = startOfMonth(date);
         const firstDayOfWeek = getDay(firstDayOfMonth);
-
-        // Berechne das Datum des ersten Tages des vorherigen Monats
         const firstDayOfPreviousMonth = addDays(
             firstDayOfMonth,
             -firstDayOfWeek
         );
 
         const previousMonthDays: Date[] = [];
-        let currentDate = firstDayOfPreviousMonth;
 
-        // Generiere die Tage des vorherigen Monats
         for (let i = 0; i < firstDayOfWeek; i++) {
+            const currentDate = addDays(firstDayOfPreviousMonth, i);
             previousMonthDays.push(currentDate);
-            currentDate = addDays(currentDate, 1);
         }
 
         return previousMonthDays;
     };
 
-    const generateDaysArray = (date: Date) => {
+    const generateDaysArray = (date: Date): (Date | null)[] => {
         const firstDayOfMonth = startOfMonth(date);
         const daysInMonth: (Date | null)[] = [];
+
         let currentDate = firstDayOfMonth;
 
         while (isSameMonth(currentDate, firstDayOfMonth)) {
             daysInMonth.push(currentDate);
             currentDate = addDays(currentDate, 1);
-
-            if (!isSameMonth(currentDate, firstDayOfMonth)) {
-                break; // Beende die Schleife, wenn der nächste Monat beginnt
-            }
         }
 
         return daysInMonth;

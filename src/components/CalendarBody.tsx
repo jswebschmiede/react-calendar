@@ -1,12 +1,5 @@
 import React from 'react';
-import {
-    format,
-    addDays,
-    isDate,
-    isBefore,
-    startOfMonth,
-    isSameMonth
-} from 'date-fns';
+import { format, isSameMonth } from 'date-fns';
 import { chunk } from 'lodash';
 import { useCalendarContext } from './CalendarContext';
 
