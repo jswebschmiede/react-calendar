@@ -6,7 +6,7 @@ import { useCalendarContext } from './CalendarContext';
 const CalendarBody: React.FC = () => {
     const { days, locale, weekdayNames, daysInPreviousMonth } =
         useCalendarContext();
-    const weeks = Array.isArray(days) ? chunk(days, 7) : [];
+    const weeks = Array.isArray(days) ? chunk(days, 7) : []; // Split the days into weeks
 
     return (
         <div className='calendar__body border-l-2 border-t-2 bg-white'>

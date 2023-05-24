@@ -6,12 +6,12 @@ const CalendarNavbar: React.FC = () => {
     const { currentMonth, onCurrentMonthChange, locale } = useCalendarContext();
 
     const handlePreviousMonth = () => {
-        const previousMonth = subMonths(currentMonth, 1);
+        const previousMonth = subMonths(currentMonth, 1); // Subtract a month from the current month
         onCurrentMonthChange(previousMonth);
     };
 
     const handleNextMonth = () => {
-        const nextMonth = addMonths(currentMonth, 1);
+        const nextMonth = addMonths(currentMonth, 1); // Add a month to the current month
         onCurrentMonthChange(nextMonth);
     };
 

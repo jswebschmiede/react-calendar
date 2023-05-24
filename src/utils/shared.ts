@@ -5,6 +5,7 @@ export type DaysInWeekProps = {
     locale?: Locale;
 };
 
+// Returns an array of objects with the day number and label
 export const daysInWeek = ({ locale = enUS }: DaysInWeekProps) => [
     { day: 0, label: locale.localize?.day(0) ?? '' },
     { day: 1, label: locale.localize?.day(1) ?? '' },
